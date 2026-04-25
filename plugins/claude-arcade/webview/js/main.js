@@ -19,13 +19,13 @@ initSoundControls();
 initWorld();
 initSSE(location.hash.slice(1) || '');
 
-// ── Start splash — one click unlocks AudioContext, starts music + SFX ──
+// ── Start splash — one click unlocks AudioContext (sound stays off until the
+// user toggles music/SFX in the HUD or presses M/S). ──
 const splash = document.getElementById('start-splash');
 splash.addEventListener('click', () => {
-  splash.classList.add('hidden');
-  // This click is the user gesture that unlocks AudioContext
+  splash.classList.add("hidden");
+  // This click is the user gesture that unlocks AudioContext for later use.
   getAudioCtx();
-  startMusic();
 });
 
 // ── Keyboard controls ──
