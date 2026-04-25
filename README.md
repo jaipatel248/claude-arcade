@@ -1,7 +1,5 @@
 # Claude Arcade
 
-> Arcade games for Claude Code — auto-playing pixel games driven by real-time token usage.
-
 This repo is both a **plugin** (`plugins/claude-arcade/`) and a **plugin marketplace** (`.claude-plugin/marketplace.json`). You can install it with one command — see below.
 
 Watch your tokens come to life. While Claude Code runs, the character runs, jumps, and collects coins. While Claude thinks, the character charges up. While Claude waits for your input, a `?` block appears.
