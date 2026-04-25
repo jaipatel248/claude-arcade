@@ -8,6 +8,66 @@ Watch your tokens come to life. While Claude Code runs, the character runs, jump
 
 ---
 
+## Screenshots
+
+Each cell shows a distinct game state and **when it happens**. Capture in-game with `C` (saves a PNG with the HUD baked in) and drop the files into `docs/images/` using the filenames below.
+
+<table>
+  <tr>
+    <td width="33%" valign="top" align="center">
+      <img src="docs/images/01-running.gif" alt="Mario sprinting with the HUD live-updating" width="100%" /><br/>
+      <strong>Normal gameplay</strong><br/>
+      <sub>Tokens are flowing — Mario walks/runs/sprints based on tok/s, HUD numbers tick up</sub>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <img src="docs/images/02-thinking.gif" alt="Mario charging up with a thought bubble" width="100%" /><br/>
+      <strong>Thinking</strong><br/>
+      <sub>Claude is processing (no tokens yet) — Mario glows and a <code>…</code> thought bubble appears</sub>
+    </td>
+    <td width="33%" valign="top" align="center">
+      <img src="docs/images/03-waiting.gif" alt="Question block above Mario; browser tab flashing" width="100%" /><br/>
+      <strong>Waiting for your input</strong><br/>
+      <sub>Claude is waiting on your reply — <code>?</code> block appears, character taps foot, tab title flashes</sub>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" align="center">
+      <img src="docs/images/04-burst.png" alt="Mario speed-boosting with a star streak" width="100%" /><br/>
+      <strong>Token burst</strong><br/>
+      <sub>First big chunk of output after thinking — speed boost with a star streak</sub>
+    </td>
+    <td valign="top" align="center">
+      <img src="docs/images/05-tool.gif" alt="Mini-Marios spawn alongside Mario when subagents start" width="100%" /><br/>
+      <strong>Subagent spawn</strong><br/>
+      <sub>Every time Claude spawns a subagent, a small tinted Mario joins the level and runs alongside the main one</sub>
+    </td>
+    <td valign="top" align="center">
+      <img src="docs/images/06-fireworks.gif" alt="Fireworks over Mario after a task ends" width="100%" /><br/>
+      <strong>Task complete</strong><br/>
+      <sub>Claude finishes a task or turn — fireworks celebration, coin counter pops</sub>
+    </td>
+  </tr>
+  <tr>
+    <td valign="top" align="center">
+      <img src="docs/images/07-rain.gif" alt="Sky darkened with rain falling on the level" width="100%" /><br/>
+      <strong>Context 60% — rain</strong><br/>
+      <sub>Context window passes 60% — sky darkens, rain starts</sub>
+    </td>
+    <td valign="top" align="center">
+      <img src="docs/images/08-fire.gif" alt="Red sky with fire embers drifting" width="100%" /><br/>
+      <strong>Context 80% — fire</strong><br/>
+      <sub>Context window passes 80% — red sky, fire embers drifting</sub>
+    </td>
+    <td valign="top" align="center">
+      <img src="docs/images/09-shake.gif" alt="Screen shake at high context pressure" width="100%" /><br/>
+      <strong>Context 90% — shake</strong><br/>
+      <sub>Context window passes 90% — screen shakes, time to clear context</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## Install (recommended)
 
 Add the marketplace, then install the plugin. From inside any Claude Code session:
@@ -95,17 +155,6 @@ The launch script forks itself into the background on first run (cross-platform 
 
 ---
 
-## Cross-platform support
-
-| Platform | Status |
-|---|---|
-| macOS | Tested |
-| Linux | Tested |
-| Windows | Supported (PowerShell, cmd.exe, Git Bash) |
-
-The launcher avoids shell-specific backgrounding (`&`, `start /B`, `Start-Process`) by self-forking with Node's `child_process.spawn(..., { detached: true, windowsHide: true })`. Browser-open uses `open` (macOS), `xdg-open` (Linux), or `cmd /c start` (Windows).
-
----
 
 ## Repo layout
 
@@ -129,6 +178,7 @@ claude-arcade/
 │           ├── js/                 ← Game modules
 │           └── sounds/
 ├── docs/
+│   └── images/                     ← README screenshots (01-running.png … 09-shake.png)
 ├── LICENSE                         (MIT)
 └── README.md
 ```
