@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Arcade — Super Mario Runner</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #6b8cff; overflow: hidden; font-family: 'Courier New', monospace; }
+  canvas { display: block; image-rendering: pixelated; }
+  #hud {
+    position: fixed; top: 0; left: 0; right: 0; padding: 14px 24px;
+    display: flex; justify-content: space-between;
+    background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; z-index: 10;
+  }
+  .hud-group { display: flex; gap: 20px; align-items: center; }
+  .hud-item { display: flex; flex-direction: column; gap: 1px; }
+  .hud-label { opacity: 0.5; font-size: 12px; text-transform: uppercase; }
+  .hud-value { font-weight: bold; font-size: 18px; }
+  .model-badge { padding: 4px 12px; border-radius: 4px; font-size: 14px; font-weight: bold; }
+  .sound-btn {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+    color: rgba(255,255,255,0.5); border-radius: 4px; padding: 2px 8px;
+    font-size: 11px; font-family: inherit; cursor: pointer; transition: all 0.2s;
+  }
+  .sound-btn.active { background: rgba(100,255,100,0.2); border-color: rgba(100,255,100,0.5); color: #8f8; }
+  .sound-btn:hover { background: rgba(255,255,255,0.2); }
+  .token-wrap { position: relative; cursor: default; }
+  .token-tooltip {
+    display: none; position: absolute; top: 100%; left: 0; margin-top: 6px; z-index: 30;
+    background: rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px; padding: 8px 12px; min-width: 150px;
+    backdrop-filter: blur(8px); box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  }
+  .token-wrap:hover .token-tooltip { display: block; }
+  .token-row {
+    display: flex; align-items: center; gap: 8px;
+    padding: 3px 0; font-size: 13px; color: rgba(255,255,255,0.85);
+  }
+  .token-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .token-val { margin-left: auto; font-weight: bold; font-size: 14px; color: #fff; }
+  .shortcut-wrap { position: relative; display: flex; align-items: center; }
+  .shortcut-icon {
+    display: flex; align-items: center; justify-content: center;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25);
+    color: rgba(255,255,255,0.5); font-size: 12px; font-weight: bold;
+    cursor: help; user-select: none; transition: all 0.2s;
+  }
+  .shortcut-icon:hover { background: rgba(255,255,255,0.25); color: #fff; }
+  .shortcut-tooltip {
+    display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; z-index: 30;
+    background: rgba(0,0,0,0.9); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 8px; padding: 12px 16px; min-width: 200px;
+    backdrop-filter: blur(8px); box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+  }
+  .shortcut-wrap:hover .shortcut-tooltip { display: block; }
+  .shortcut-tooltip h4 {
+    margin: 0 0 8px; font-size: 11px; text-transform: uppercase;
+    color: rgba(255,255,255,0.5); letter-spacing: 1px;
+  }
+  .shortcut-row {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    padding: 4px 0; font-size: 13px; color: rgba(255,255,255,0.8);
+  }
+  .shortcut-key {
+    background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: bold;
+    color: #fff; font-family: inherit; min-width: 28px; text-align: center;
+  }
+  #start-splash {
+    position: fixed; inset: 0; z-index: 50; cursor: pointer;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    background: rgba(0,0,0,0.75); backdrop-filter: blur(4px);
+    transition: opacity 0.4s;
+  }
+  #start-splash.hidden { opacity: 0; pointer-events: none; }
+  .start-title { font-size: 32px; font-weight: bold; color: #fff; margin-bottom: 8px; }
+  .start-sub { font-size: 14px; color: rgba(255,255,255,0.5); }
+  .start-btn {
+    margin-top: 20px; padding: 12px 36px; font-size: 18px; font-weight: bold;
+    font-family: inherit; border: 2px solid #fff; border-radius: 8px;
+    background: rgba(255,255,255,0.1); color: #fff; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .start-btn:hover { background: rgba(255,255,255,0.25); }
+  #waiting {
+    position: fixed; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    background: #6b8cff; color: rgba(255,255,255,0.5); font-size: 18px; z-index: 20;
+    gap: 10px; transition: opacity 0.5s;
+  }
+  #waiting.hidden { opacity: 0; pointer-events: none; }
+</style>
+</head>
+<body>
+<div id="hud">
+  <div class="hud-group">
+    <span class="model-badge" id="hud-model" style="background:#3794ff">Opus</span>
+    <div class="hud-item token-wrap"><span class="hud-label">Tokens</span><span class="hud-value" id="hud-score">0</span><div class="token-tooltip" id="hud-io"><div class="token-row"><span class="token-dot" style="background:#5af"></span><span>Input</span><span class="token-val" id="hud-in">0</span></div><div class="token-row"><span class="token-dot" style="background:#fa5"></span><span>Output</span><span class="token-val" id="hud-out">0</span></div></div></div>
+    <div class="hud-item"><span class="hud-label">Speed</span><span class="hud-value" id="hud-speed">0</span></div>
+    <div class="hud-item"><span class="hud-label">Coins</span><span class="hud-value" style="color:#ffd700" id="hud-coins">0</span></div>
+    <div class="hud-item"><span class="hud-label">Prompts</span><span class="hud-value" style="color:#7df" id="hud-prompts">0</span></div>
+  </div>
+  <div class="hud-group">
+    <div class="hud-item"><span class="hud-label">Context</span><span class="hud-value" id="hud-ctx">0%</span></div>
+    <div class="hud-item"><span class="hud-label">Cost</span><span class="hud-value" style="color:#ffd700" id="hud-cost">$0</span></div>
+    <div class="hud-item"><span class="hud-label">Time</span><span class="hud-value" id="hud-time">0:00</span></div>
+    <div class="hud-item sound-controls">
+      <span class="hud-label">Sound</span>
+      <div style="display:flex;gap:6px;">
+        <button class="sound-btn active" id="btn-music" title="Music (M)">&#x266B; On</button>
+        <button class="sound-btn active" id="btn-sfx" title="Sound Effects (S)">SFX On</button>
+      </div>
+    </div>
+    <div class="shortcut-wrap">
+      <span class="shortcut-icon">?</span>
+      <div class="shortcut-tooltip">
+        <h4>Keyboard Shortcuts</h4>
+        <div class="shortcut-row"><span>Jump</span><span class="shortcut-key">Space</span></div>
+        <div class="shortcut-row"><span>Toggle Music</span><span class="shortcut-key">M</span></div>
+        <div class="shortcut-row"><span>Toggle SFX</span><span class="shortcut-key">S</span></div>
+        <div class="shortcut-row"><span>Screenshot</span><span class="shortcut-key">C</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="start-splash">
+  <div class="start-title">Claude Arcade</div>
+  <div class="start-sub">Super Mario Runner</div>
+  <button class="start-btn">Click to Play</button>
+</div>
+<div id="waiting" class="hidden"><div style="font-size:48px;opacity:0.3;">&#x1F3AE;</div><div>Waiting for Claude Code...</div></div>
+<canvas id="game"></canvas>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

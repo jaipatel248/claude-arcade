@@ -1,0 +1,35 @@
+{
+  "name": "claude-arcade",
+  "owner": {
+    "name": "Jay Patel"
+  },
+  "metadata": {
+    "description": "Arcade games for Claude Code — auto-playing pixel games driven by real-time token usage.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "claude-arcade",
+      "source": "./plugins/claude-arcade",
+      "description": "Arcade games for Claude Code — auto-playing pixel games driven by real-time token usage.",
+      "version": "1.0.0",
+      "author": {
+        "name": "Jay Patel"
+      },
+      "homepage": "https://github.com/jaipatel248/claude-arcade",
+      "repository": "https://github.com/jaipatel248/claude-arcade",
+      "license": "MIT",
+      "keywords": [
+        "arcade",
+        "game",
+        "mario",
+        "platformer",
+        "visualization",
+        "tokens",
+        "fun",
+        "ambient"
+      ],
+      "category": "fun"
+    }
+  ]
+}
