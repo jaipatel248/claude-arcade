@@ -8,9 +8,13 @@ Watch your tokens come to life. While Claude Code runs, the character runs, jump
 
 ---
 
-## Screenshots
+## Games
 
-Each cell shows a distinct game state and **when it happens**. Capture in-game with `C` (saves a PNG with the HUD baked in) and drop the files into `docs/images/` using the filenames below.
+Claude Arcade is built to host **multiple arcade games** for Claude Code — each one a tiny pixel game whose visuals are driven entirely by what's happening in your live session (tokens, prompts, tools, context pressure, etc.). Right now it ships with one:
+
+### Super Mario Runner
+
+An auto-playing side-scroller. You don't control Mario — your Claude Code session does. Token throughput becomes his running speed, thinking becomes a glow, prompts become jumps, subagents become tiny tinted sidekicks, and a filling context window literally rains and burns down the level. Each cell below is a distinct in-game state and **when it triggers**.
 
 <table>
   <tr>
