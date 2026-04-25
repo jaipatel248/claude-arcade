@@ -1,7 +1,7 @@
 {
   "name": "claude-arcade",
   "description": "Arcade games for Claude Code — auto-playing pixel games driven by real-time token usage.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "author": {
     "name": "Jay Patel"
   },

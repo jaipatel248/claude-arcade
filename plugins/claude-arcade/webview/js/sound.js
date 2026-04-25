@@ -1,7 +1,7 @@
 // ── Sound system — audio context, SFX, and procedural chiptune music ──
 
 let audioCtx = null;
-let musicEnabled = true;
+let musicEnabled = false;
 let sfxEnabled = true;
 let musicPlaying = false;
 
